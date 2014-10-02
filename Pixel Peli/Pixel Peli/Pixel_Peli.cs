@@ -6,13 +6,16 @@ using Jypeli.Controls;
 using Jypeli.Effects;
 using Jypeli.Widgets;
 
-public class Pixelpeli : PhysicsGame
+public class Pixel_Peli : PhysicsGame
 {
-    const double nopeus = 125;
-    const double hyppyNopeus = 490;
-    const int RUUDUN_KOKO = 45;
+    const double nopeus = 200;
+    const double hyppyNopeus = 750;
+    const int RUUDUN_KOKO = 40;
 
     PlatformCharacter pelaaja;
+
+    Image pelaajanKuva = LoadImage("norsu");
+    Image tahtiKuva = LoadImage("tahti");
 
     SoundEffect maaliAani = LoadSoundEffect("maali");
 
@@ -22,7 +25,6 @@ public class Pixelpeli : PhysicsGame
 
         LuoKentta();
         LisaaNappaimet();
-        LuoPistelaskuri();
 
         Camera.Follow(pelaaja);
         Camera.ZoomFactor = 1.2;
@@ -35,22 +37,14 @@ public class Pixelpeli : PhysicsGame
         ruudut.SetTileMethod('N', LuoPelaaja);
         ruudut.SetTileMethod('#', LuoPalikka);
         ruudut.SetTileMethod('*', LuoTahti);
-        ruudut.SetTileMethod('+', LuoSuperTahti);
         ruudut.Execute(20, 20);
-
-        Level.Background.CreateGradient(Color.Azure, Color.DarkBlue);
     }
 
     void LuoPelaaja(Vector paikka, double leveys, double korkeus)
     {
         pelaaja = new PlatformCharacter(10, 10);
         pelaaja.Position = paikka;
-        pelaaja.Shape = Shape.Circle;
-        pelaaja.Color = Color.White;
-        pelaaja.CanRotate = true;
-
         AddCollisionHandler(pelaaja, "tahti", TormaaTahteen);
-        AddCollisionHandler(pelaaja, "supertahti", TormaaSuperTahteen);
         Add(pelaaja);
     }
 
@@ -65,27 +59,12 @@ public class Pixelpeli : PhysicsGame
 
     void LuoTahti(Vector paikka, double leveys, double korkeus)
     {
-        PhysicsObject tahti = new PhysicsObject(10, 10);
+        PhysicsObject tahti = new PhysicsObject(5, 5);
         tahti.IgnoresCollisionResponse = true;
         tahti.Position = paikka;
         tahti.Shape = Shape.Star;
         tahti.Color = Color.Gold;
-        tahti.IgnoresGravity = true;
-        tahti.Tag = "tahti"; 
         Add(tahti, 1);
-    }
-   
-    void LuoSuperTahti(Vector paikka, double leveys, double korkeus)
-    {
-        PhysicsObject supertahti = new PhysicsObject(15, 15);
-        supertahti.IgnoresCollisionResponse = true;
-        supertahti.Position = paikka;
-        supertahti.Shape = Shape.Star;
-        supertahti.Color = Color.Silver;
-        supertahti.IgnoresGravity = true;
-        supertahti.Tag = "supertahti";
-        Add(supertahti, 1);
-
     }
 
     void LisaaNappaimet()
@@ -116,46 +95,10 @@ public class Pixelpeli : PhysicsGame
         hahmo.Jump(nopeus);
     }
 
-    void TormaaTahteen(PhysicsObject pelaaja, PhysicsObject tahti)
+    void TormaaTahteen(PhysicsObject hahmo, PhysicsObject tahti)
     {
-      
-        MessageDisplay.Add("+1 Tähti!");
+        maaliAani.Play();
+        MessageDisplay.Add("Keräsit tähden!");
         tahti.Destroy();
-        pisteLaskuri.Value += 1;
     }
-
-    void TormaaSuperTahteen(PhysicsObject pelaaja, PhysicsObject tahti)
-    {
-
-        MessageDisplay.Add("+1 SuperTähti!");
-        tahti.Destroy();
-        pisteLaskuri.Value += 10;
-
-    }
-    
-    IntMeter pisteLaskuri;
-
-    void LuoPistelaskuri()
-    {
-        pisteLaskuri = new IntMeter(0);
-        IntMeter keratytEsineet = new IntMeter(0);
-        pisteLaskuri.MaxValue = 20;
-        pisteLaskuri.UpperLimit += KaikkiKeratty;
-
-
-        Label pisteNaytto = new Label();
-        pisteNaytto.X = Screen.Left + 1700;
-        pisteNaytto.Y = Screen.Top - 100;
-        pisteNaytto.TextColor = Color.Black;
-        pisteNaytto.Color = Color.White;
-
-        pisteNaytto.BindTo(pisteLaskuri);
-        Add(pisteNaytto);
-    }
-    void KaikkiKeratty()
-    {
-        MessageDisplay.Add("Pelaaja 1 voitti pelin.");
-
-    }
-
 }
