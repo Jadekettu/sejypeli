@@ -8,6 +8,7 @@ using Jypeli.Widgets;
 
 public class Pixelpeli : PhysicsGame
 {
+    
     const double nopeus = 125;
     const double hyppyNopeus = 490;
     const int RUUDUN_KOKO = 45;
@@ -15,6 +16,9 @@ public class Pixelpeli : PhysicsGame
     Image Tahti1 = LoadImage("Tahti1");
     Image SuperTahti1 = LoadImage("SuperTahti1");
     Image Pelaaja1 = LoadImage("Pelaaja1");
+    Image Tausta = LoadImage("Tausta");
+    Image Taso1 = LoadImage("Taso1");
+    Image Taso2 = LoadImage("Taso2");
 
     PlatformCharacter pelaaja;
 
@@ -22,31 +26,109 @@ public class Pixelpeli : PhysicsGame
 
     public override void Begin()
     {
-        
+        Level.Background.CreateGradient(Color.DarkBlue, Color.Black);
+        MultiSelectWindow alkuValikko = new MultiSelectWindow("Kerää kaikki tähdet 30 sekunnissa",
+"Aloita peli", "Lopeta");
+        alkuValikko.ItemSelected += AloitusValikonNappia;
+        Add(alkuValikko);
+        alkuValikko.Color = Color.White;
+   
 
-        LuoKentta();
-        LisaaNappaimet();
-        
+    }
+    void AloitusValikonNappia(int valinta)
+    {
 
-       
+        switch (valinta)
+        {
+            case 0:
+                LuoKentta();
+                LisaaNappaimet();
+                
+                break;
+            case 1:
+                MultiSelectWindow lisäValikko = new MultiSelectWindow("Ihan varma?",
+"Aloita peli", "Joo, Lopeta");
+        lisäValikko.ItemSelected += lisaValikonNappia;
+        Add(lisäValikko);
+                break;
+            
+        }
+    }
+    void lisaValikonNappia(int valinta)
+    {
 
+        switch (valinta)
+        {
+            case 0:
+                LuoKentta();
+                LisaaNappaimet();
+                break;
+            case 1:
+                 MultiSelectWindow lisäValikko = new MultiSelectWindow("Eiks mun peli oo tarpeeks hyvä?",
+"Okei pelataan sit, Aloita peli", "En haluu pelata, Lopeta");
+        lisäValikko.ItemSelected += lisa2ValikonNappia;
+        Add(lisäValikko);
+                break;
+
+        }
+
+    }
+    void lisa2ValikonNappia(int valinta)
+    {
+
+        switch (valinta)
+        {
+            case 0:
+                LuoKentta();
+                LisaaNappaimet();
+                break;
+            case 1:
+                MultiSelectWindow lisäValikko = new MultiSelectWindow("PELAA!",
+"Pelaa peliä", "En");
+                lisäValikko.ItemSelected += lisa3ValikonNappia;
+                Add(lisäValikko);
+                break;
+
+        }
+    }
+    void lisa3ValikonNappia(int valinta)
+    {
+
+        switch (valinta)
+        {
+            case 0:
+                LuoKentta();
+                LisaaNappaimet();
+                break;
+            case 1:
+                MultiSelectWindow lisäValikko = new MultiSelectWindow(">:D Nyt ei oo muuta vaihto ehtoo",
+"Pelaa peliä");
+                lisäValikko.ItemSelected += lisa3ValikonNappia;
+                Add(lisäValikko);
+                break;
+
+        }
     }
     void LuoKentta()
     {
-        TileMap ruudut = TileMap.FromLevelAsset("kentta1");
+        TileMap ruudut = TileMap.FromLevelAsset("kentta2");
         ruudut.SetTileMethod('N', LuoPelaaja);
         ruudut.SetTileMethod('#', LuoPalikka);
+        ruudut.SetTileMethod('3', LuoPalikka2);
         ruudut.SetTileMethod('*', LuoTahti);
         ruudut.SetTileMethod('+', LuoSuperTahti);
-        ruudut.Execute(20, 20);
+        ruudut.Execute(19, 19);
 
-        Level.Background.CreateGradient(Color.Azure, Color.DarkBlue);
+        Level.Background.Image = Tausta; 
+        
         Camera.Follow(pelaaja);
         Camera.ZoomFactor = 1.2;
         Camera.StayInLevel = true;
         Gravity = new Vector(0, -1000);
-        LuoPistelaskuri();
+       
         LuoAikaLaskuri();
+        LuoPistelaskuri();
+        
     }
 
     void LuoPelaaja(Vector paikka, double leveys, double korkeus)
@@ -56,7 +138,7 @@ public class Pixelpeli : PhysicsGame
         pelaaja.Image = Pelaaja1;
         pelaaja.Shape = Shape.Circle;
         //pelaaja.Color = Color.White;
-        pelaaja.CanRotate = true;
+        //pelaaja.CanRotate = true;
 
         AddCollisionHandler(pelaaja, "tahti", TormaaTahteen);
         AddCollisionHandler(pelaaja, "supertahti", TormaaSuperTahteen);
@@ -68,8 +150,18 @@ public class Pixelpeli : PhysicsGame
         PhysicsObject taso = PhysicsObject.CreateStaticObject(leveys, korkeus);
         taso.Position = paikka;
         taso.Shape = Shape.Rectangle;
-        taso.Color = Color.Black;
+        taso.Image = Taso1;
+        //taso.Color = Color.Black;
         Add(taso);
+    }
+    void LuoPalikka2(Vector paikka, double leveys, double korkeus)
+    {
+        PhysicsObject taso2 = PhysicsObject.CreateStaticObject(leveys, korkeus);
+        taso2.Position = paikka;
+        taso2.Shape = Shape.Rectangle;
+        taso2.Image = Taso2; 
+        //taso2.Color = Color.Black;
+        Add(taso2);
     }
 
     void LuoTahti(Vector paikka, double leveys, double korkeus)
@@ -167,11 +259,20 @@ public class Pixelpeli : PhysicsGame
     {
         MessageDisplay.Add("Pelaaja voitti pelin.");
 
+        ClearAll();
+
+        Level.Background.CreateGradient(Color.DarkBlue, Color.Black);
+
+        MultiSelectWindow valikko = new MultiSelectWindow("Siinä se oli, Loppu",
+"Yritä uudestaa.", "Lopeta");
+        valikko.ItemSelected += PainettiinValikonNappia;
+        Add(valikko);
+
         
     }
     void LuoAikaLaskuri()
     {
-        Timer aikaLaskuri = new Timer()
+        Timer aikaLaskuri = new Timer();
 
         aikaLaskuri.Interval = 30;
         aikaLaskuri.Timeout += AikaLoppui;
@@ -187,13 +288,36 @@ public class Pixelpeli : PhysicsGame
 
     void AikaLoppui()
     {
-        MessageDisplay.Add("Aika loppui...");
-        
 
         ClearAll ();
-        LuoKentta();
-        LisaaNappaimet();
+
+        Level.Background.CreateGradient(Color.DarkBlue, Color.Black);
+
+        MultiSelectWindow valikko = new MultiSelectWindow("Aika loppui",
+"Yritä uudestaa.", "Lopeta");
+        valikko.ItemSelected += PainettiinValikonNappia;
+        Add(valikko);
+
+
        
     }
+    void PainettiinValikonNappia(int valinta)
+    {
+       
+        switch (valinta)
+        {
+            case 0:
+                //AloitaPeli();
+        LuoKentta();
+        LisaaNappaimet();
+        
+                break;
+            case 1:
+                Exit();
+                break;
+        }
+    }
 
+
+    public Image Tausta1 { get; set; }
 }
