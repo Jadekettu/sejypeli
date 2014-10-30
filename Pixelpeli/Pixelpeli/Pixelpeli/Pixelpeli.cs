@@ -10,7 +10,7 @@ public class Pixelpeli : PhysicsGame
 {
     
     const double nopeus = 125;
-    const double hyppyNopeus = 490;
+    const double hyppyNopeus = 480;
     const int RUUDUN_KOKO = 45;
 
     Image Tahti1 = LoadImage("Tahti1");
@@ -19,6 +19,7 @@ public class Pixelpeli : PhysicsGame
     Image Tausta = LoadImage("Tausta");
     Image Taso1 = LoadImage("Taso1");
     Image Taso2 = LoadImage("Taso2");
+    Image Sableye = LoadImage("Sableye");
 
     PlatformCharacter pelaaja;
 
@@ -117,6 +118,7 @@ public class Pixelpeli : PhysicsGame
         ruudut.SetTileMethod('3', LuoPalikka2);
         ruudut.SetTileMethod('*', LuoTahti);
         ruudut.SetTileMethod('+', LuoSuperTahti);
+        ruudut.SetTileMethod('S', Luosableye);
         ruudut.Execute(19, 19);
 
         Level.Background.Image = Tausta; 
@@ -142,6 +144,7 @@ public class Pixelpeli : PhysicsGame
 
         AddCollisionHandler(pelaaja, "tahti", TormaaTahteen);
         AddCollisionHandler(pelaaja, "supertahti", TormaaSuperTahteen);
+        AddCollisionHandler(pelaaja, "sableye", Tormaasableye);
         Add(pelaaja);
     }
 
@@ -190,6 +193,18 @@ public class Pixelpeli : PhysicsGame
         Add(supertahti, 1);
 
     }
+   
+    void Luosableye(Vector paikka, double leveys, double korkeus)
+    {
+        PhysicsObject sableye = new PhysicsObject(11, 14);
+        sableye.IgnoresCollisionResponse = false;
+        sableye.Position = paikka;
+        sableye.Image = Sableye;
+        sableye.IgnoresGravity = false;
+        sableye.CanRotate = false;
+        sableye.Tag = "sableye";
+        Add(sableye, 1);
+    }
 
     void LisaaNappaimet()
     {
@@ -236,6 +251,13 @@ public class Pixelpeli : PhysicsGame
 
     }
     
+    void Tormaasableye(PhysicsObject pelaaja, PhysicsObject sableye)
+    {
+
+        MessageDisplay.Add("Sableye");
+
+    }
+  
     IntMeter pisteLaskuri;
 
     void LuoPistelaskuri()
