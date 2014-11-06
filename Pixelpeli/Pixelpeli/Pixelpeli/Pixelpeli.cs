@@ -8,7 +8,7 @@ using Jypeli.Widgets;
 
 public class Pixelpeli : PhysicsGame
 {
-    
+
     const double nopeus = 125;
     const double hyppyNopeus = 480;
     const int RUUDUN_KOKO = 45;
@@ -20,10 +20,13 @@ public class Pixelpeli : PhysicsGame
     Image Taso1 = LoadImage("Taso1");
     Image Taso2 = LoadImage("Taso2");
     Image Sableye = LoadImage("Sableye");
-
+    Image Luna = LoadImage("luna");
+    public Image Tausta1 { get; set; }
     PlatformCharacter pelaaja;
 
     SoundEffect maaliAani = LoadSoundEffect("maali");
+
+    int kenttaNro = 1;
 
     public override void Begin()
     {
@@ -33,7 +36,7 @@ public class Pixelpeli : PhysicsGame
         alkuValikko.ItemSelected += AloitusValikonNappia;
         Add(alkuValikko);
         alkuValikko.Color = Color.White;
-   
+
 
     }
     void AloitusValikonNappia(int valinta)
@@ -42,17 +45,18 @@ public class Pixelpeli : PhysicsGame
         switch (valinta)
         {
             case 0:
-                LuoKentta();
-                LisaaNappaimet();
-                
+                //LuoKentta();
+                //LisaaNappaimet();
+                SeuraavaKentta();
+
                 break;
             case 1:
                 MultiSelectWindow lisäValikko = new MultiSelectWindow("Ihan varma?",
 "Aloita peli", "Joo, Lopeta");
-        lisäValikko.ItemSelected += lisaValikonNappia;
-        Add(lisäValikko);
+                lisäValikko.ItemSelected += lisaValikonNappia;
+                Add(lisäValikko);
                 break;
-            
+
         }
     }
     void lisaValikonNappia(int valinta)
@@ -61,14 +65,14 @@ public class Pixelpeli : PhysicsGame
         switch (valinta)
         {
             case 0:
-                LuoKentta();
+                LuoKentta("kentta1");
                 LisaaNappaimet();
                 break;
             case 1:
-                 MultiSelectWindow lisäValikko = new MultiSelectWindow("Eiks mun peli oo tarpeeks hyvä?",
+                MultiSelectWindow lisäValikko = new MultiSelectWindow("Eiks mun peli oo tarpeeks hyvä?",
 "Okei pelataan sit, Aloita peli", "En haluu pelata, Lopeta");
-        lisäValikko.ItemSelected += lisa2ValikonNappia;
-        Add(lisäValikko);
+                lisäValikko.ItemSelected += lisa2ValikonNappia;
+                Add(lisäValikko);
                 break;
 
         }
@@ -80,7 +84,7 @@ public class Pixelpeli : PhysicsGame
         switch (valinta)
         {
             case 0:
-                LuoKentta();
+                LuoKentta("kentta1");
                 LisaaNappaimet();
                 break;
             case 1:
@@ -98,7 +102,7 @@ public class Pixelpeli : PhysicsGame
         switch (valinta)
         {
             case 0:
-                LuoKentta();
+                LuoKentta("kentta1");
                 LisaaNappaimet();
                 break;
             case 1:
@@ -110,28 +114,45 @@ public class Pixelpeli : PhysicsGame
 
         }
     }
-    void LuoKentta()
+    void SeuraavaKentta()
     {
-        TileMap ruudut = TileMap.FromLevelAsset("kentta2");
+        ClearAll();
+
+        if (kenttaNro == 1) LuoKentta("kentta1");
+        else if (kenttaNro == 2) LuoKentta("kentta2");
+        else if (kenttaNro == 3) LuoKentta("kentta3");
+        else if (kenttaNro > 3) Exit();
+
+
+        LisaaNappaimet();
+
+    }
+    void LuoKentta(string kentta)
+    {
+
+        TileMap ruudut = TileMap.FromLevelAsset(kentta);
         ruudut.SetTileMethod('N', LuoPelaaja);
         ruudut.SetTileMethod('#', LuoPalikka);
         ruudut.SetTileMethod('3', LuoPalikka2);
         ruudut.SetTileMethod('*', LuoTahti);
         ruudut.SetTileMethod('+', LuoSuperTahti);
         ruudut.SetTileMethod('S', Luosableye);
+        ruudut.SetTileMethod('L', Luoluna);
         ruudut.Execute(19, 19);
 
-        Level.Background.Image = Tausta; 
-        
+
+        Level.Background.Image = Tausta;
+
         Camera.Follow(pelaaja);
         Camera.ZoomFactor = 1.2;
         Camera.StayInLevel = true;
         Gravity = new Vector(0, -1000);
-       
+
         LuoAikaLaskuri();
         LuoPistelaskuri();
-        
+
     }
+
 
     void LuoPelaaja(Vector paikka, double leveys, double korkeus)
     {
@@ -162,7 +183,7 @@ public class Pixelpeli : PhysicsGame
         PhysicsObject taso2 = PhysicsObject.CreateStaticObject(leveys, korkeus);
         taso2.Position = paikka;
         taso2.Shape = Shape.Rectangle;
-        taso2.Image = Taso2; 
+        taso2.Image = Taso2;
         //taso2.Color = Color.Black;
         Add(taso2);
     }
@@ -176,10 +197,10 @@ public class Pixelpeli : PhysicsGame
         //tahti.Shape = Shape.Star;
         //tahti.Color = Color.Gold;
         tahti.IgnoresGravity = true;
-        tahti.Tag = "tahti"; 
+        tahti.Tag = "tahti";
         Add(tahti, 1);
     }
-   
+
     void LuoSuperTahti(Vector paikka, double leveys, double korkeus)
     {
         PhysicsObject supertahti = new PhysicsObject(19, 19);
@@ -193,7 +214,7 @@ public class Pixelpeli : PhysicsGame
         Add(supertahti, 1);
 
     }
-   
+
     void Luosableye(Vector paikka, double leveys, double korkeus)
     {
         PhysicsObject sableye = new PhysicsObject(11, 14);
@@ -205,7 +226,17 @@ public class Pixelpeli : PhysicsGame
         sableye.Tag = "sableye";
         Add(sableye, 1);
     }
-
+    void Luoluna(Vector paikka, double leveys, double korkeus)
+    {
+        PhysicsObject luna = new PhysicsObject(25, 18);
+        luna.IgnoresCollisionResponse = false;
+        luna.Position = paikka;
+        luna.Image = Luna;
+        luna.IgnoresGravity = false;
+        luna.CanRotate = false;
+        luna.Tag = "Luna";
+        Add(luna, 1);
+    }
     void LisaaNappaimet()
     {
         Keyboard.Listen(Key.F1, ButtonState.Pressed, ShowControlHelp, "Näytä ohjeet");
@@ -236,7 +267,7 @@ public class Pixelpeli : PhysicsGame
 
     void TormaaTahteen(PhysicsObject pelaaja, PhysicsObject tahti)
     {
-      
+
         MessageDisplay.Add("+1 Tähti!");
         tahti.Destroy();
         pisteLaskuri.Value += 1;
@@ -250,14 +281,14 @@ public class Pixelpeli : PhysicsGame
         pisteLaskuri.Value += 10;
 
     }
-    
+
     void Tormaasableye(PhysicsObject pelaaja, PhysicsObject sableye)
     {
 
         MessageDisplay.Add("Sableye");
 
     }
-  
+
     IntMeter pisteLaskuri;
 
     void LuoPistelaskuri()
@@ -279,18 +310,17 @@ public class Pixelpeli : PhysicsGame
     }
     void KaikkiKeratty()
     {
-        MessageDisplay.Add("Pelaaja voitti pelin.");
 
         ClearAll();
 
         Level.Background.CreateGradient(Color.DarkBlue, Color.Black);
 
-        MultiSelectWindow valikko = new MultiSelectWindow("Siinä se oli, Loppu",
-"Yritä uudestaa.", "Lopeta");
+        MultiSelectWindow valikko = new MultiSelectWindow("Suoritit kentän",
+"Jatka", "Lopeta");
         valikko.ItemSelected += PainettiinValikonNappia;
         Add(valikko);
 
-        
+
     }
     void LuoAikaLaskuri()
     {
@@ -311,28 +341,44 @@ public class Pixelpeli : PhysicsGame
     void AikaLoppui()
     {
 
-        ClearAll ();
+        ClearAll();
 
         Level.Background.CreateGradient(Color.DarkBlue, Color.Black);
 
         MultiSelectWindow valikko = new MultiSelectWindow("Aika loppui",
 "Yritä uudestaa.", "Lopeta");
-        valikko.ItemSelected += PainettiinValikonNappia;
+        valikko.ItemSelected += PainettiinuusiValikonNappia;
         Add(valikko);
 
 
-       
+
     }
-    void PainettiinValikonNappia(int valinta)
+    void PainettiinuusiValikonNappia(int valinta)
     {
-       
+
         switch (valinta)
         {
             case 0:
-                //AloitaPeli();
-        LuoKentta();
-        LisaaNappaimet();
-        
+                SeuraavaKentta();
+
+
+                break;
+            case 1:
+                Exit();
+                break;
+        }
+    }
+    void PainettiinValikonNappia(int valinta)
+    {
+
+        switch (valinta)
+        {
+            case 0:
+                kenttaNro++;
+                SeuraavaKentta();
+                //LuoKentta();
+                //LisaaNappaimet();
+
                 break;
             case 1:
                 Exit();
@@ -341,5 +387,4 @@ public class Pixelpeli : PhysicsGame
     }
 
 
-    public Image Tausta1 { get; set; }
 }

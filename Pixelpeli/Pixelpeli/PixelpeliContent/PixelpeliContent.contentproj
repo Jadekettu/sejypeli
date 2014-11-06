@@ -52,13 +52,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="kentta1.txt">
-      <Name>kentta1</Name>
-      <Importer>TextFileImporter</Importer>
-      <Processor>TextFileContentProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Tahti2.png">
       <Name>Tahti2</Name>
       <Importer>TextureImporter</Importer>
@@ -87,8 +80,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="kentta2.txt">
-      <Name>kentta2</Name>
+    <Compile Include="kentta1.txt">
+      <Name>kentta1</Name>
       <Importer>TextFileImporter</Importer>
       <Processor>TextFileContentProcessor</Processor>
     </Compile>
@@ -117,6 +110,27 @@
   <ItemGroup>
     <Compile Include="Sableye.png">
       <Name>Sableye</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="kentta2.txt">
+      <Name>kentta2</Name>
+      <Importer>TextFileImporter</Importer>
+      <Processor>TextFileContentProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="kentta3.txt">
+      <Name>kentta3</Name>
+      <Importer>TextFileImporter</Importer>
+      <Processor>TextFileContentProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Luna.png">
+      <Name>Luna</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
