@@ -21,6 +21,7 @@ public class Pixelpeli : PhysicsGame
     Image Taso2 = LoadImage("Taso2");
     Image Sableye = LoadImage("Sableye");
     Image Luna = LoadImage("luna");
+    Image pallo = LoadImage("pallo");
     public Image Tausta1 { get; set; }
     PlatformCharacter pelaaja;
 
@@ -138,6 +139,7 @@ public class Pixelpeli : PhysicsGame
         ruudut.SetTileMethod('+', LuoSuperTahti);
         ruudut.SetTileMethod('S', Luosableye);
         ruudut.SetTileMethod('L', Luoluna);
+        ruudut.SetTileMethod('P', Luoilmapallo);
         ruudut.Execute(19, 19);
 
 
@@ -228,7 +230,7 @@ public class Pixelpeli : PhysicsGame
     }
     void Luoluna(Vector paikka, double leveys, double korkeus)
     {
-        PhysicsObject luna = new PhysicsObject(25, 18);
+        PhysicsObject luna = new PhysicsObject(32, 18);
         luna.IgnoresCollisionResponse = false;
         luna.Position = paikka;
         luna.Image = Luna;
@@ -236,6 +238,17 @@ public class Pixelpeli : PhysicsGame
         luna.CanRotate = false;
         luna.Tag = "Luna";
         Add(luna, 1);
+    }
+    void Luoilmapallo(Vector paikka, double leveys, double korkeus)
+    {
+        PhysicsObject ilmapallo = new PhysicsObject(11, 14);
+        ilmapallo.IgnoresCollisionResponse = false;
+        ilmapallo.Position = paikka;
+        ilmapallo.Image = pallo;
+        ilmapallo.IgnoresGravity = false;
+        ilmapallo.CanRotate = false;
+        ilmapallo.Tag = "ilmapallo";
+        Add(ilmapallo, 1);
     }
     void LisaaNappaimet()
     {
